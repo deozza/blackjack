@@ -9,17 +9,17 @@ class UserControllerTest extends WebTestCase
 
     public function setUp(): void
     {
+        // Création des utilisateurs
         $this->client = static::createClient();
-
-        // Création de 10 utilisateurs
-        for ($i = 0; $i < 10; $i++) {
+        for ($i = 0; $i < 20; $i++) {
             $username = uniqid();
             $password = uniqid();
 
             $body = json_encode([
                 'email' => $username . '@test.fr',
-                'password' => $password,
-                'username' => $username
+                'username' => $username,
+                'password' => $password
+                
             ]);
 
             $this->client->request('POST', '/user', [], [], ['CONTENT_TYPE' => 'application/json'], $body);
