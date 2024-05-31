@@ -20,17 +20,13 @@
       - [deleteUserInfos](#deleteuserinfos)
     - [GameController](#gamecontroller)
       - [createGame](#creategame)
-      - [getGameList](#getgamelist)
-      - [getGameInfos](#getgameinfos)
-      - [stopGame](#stopgame)
-      - [addRoundToGame](#addroundtogame)
-      - [addRoundToGame](#addroundtogame-1)
+      - [getListOfGames](#getlistofgames)
+      - [getGame](#getgame)
       - [deleteGame](#deletegame)
-    - [RoundController](#roundcontroller)
-      - [getRoundList](#getroundlist)
-    - [PlayerRoundController](#playerroundcontroller)
-      - [getRound](#getround)
-      - [wageRound](#wageround)
+    - [TurnController](#turncontroller)
+      - [createTurn](#createturn)
+      - [getTurn](#getturn)
+      - [wageTurn](#wageturn)
       - [hitRound](#hitround)
       - [standRound](#standround)
 
@@ -198,7 +194,7 @@ Route permettant de supprimer un utilisateur selon son uuid. Il faut que l'utili
 
 Route permettant de créer une nouvelle partie de blackjack. Il faut que l'utilisateur qui utilise cette route soit authentifié
 
-#### getGameList
+#### getListOfGames
 
  * url : `/game`
  * method : `GET`
@@ -210,7 +206,7 @@ Route permettant de créer une nouvelle partie de blackjack. Il faut que l'utili
 
 Route permettant d'obtenir une liste paginée de toutes les parties enregistrées en BDD. Il faut que l'utilisateur qui utilise cette route soit authentifié et ait le rôle `ROLE_ADMIN`.
 
-#### getGameInfos
+#### getGame
 
  * url : `/game/{gameId}`
  * method : `GET`
@@ -218,33 +214,6 @@ Route permettant d'obtenir une liste paginée de toutes les parties enregistrée
 **Description :**
 
 Route permettant d'obtenir les informations d'une partie selon son uuid. Il faut que l'utilisateur qui utilise cette route soit authentifié et participe à la partie.
-
-#### stopGame
-
- * url : `/game/{gameId}/stop`
- * method : `PATCH`
-
-**Description :**
-
-Route permettant d'arrêter une partie en cours selon son uuid. Il faut que l'utilisateur qui utilise cette route soit authentifié et participe à la partie.
-
-#### addRoundToGame
-
- * url : `/game/{gameId}/newround`
- * method : `PATCH`
-
-**Description :**
-
-Route permettant de lancer un nouveau round d'une partie en cours selon son uuid. Il faut que l'utilisateur qui utilise cette route soit authentifié et participe à la partie.
-
-#### addRoundToGame
-
- * url : `/game/{gameId}/newround`
- * method : `PATCH`
-
-**Description :**
-
-Route permettant de lancer un nouveau round d'une partie en cours selon son uuid. Il faut que l'utilisateur qui utilise cette route soit authentifié et participe à la partie.
 
 #### deleteGame
 
@@ -255,31 +224,29 @@ Route permettant de lancer un nouveau round d'une partie en cours selon son uuid
 
 Route permettant de supprimer une partie selon son uuid. Il faut que l'utilisateur qui utilise cette route soit authentifié et participe à la partie.
 
-### RoundController
+### TurnController
 
-#### getRoundList
+#### createTurn
 
- * url : `/round`
- * method : `GET`
+ * url : `/game/{gameId}/turn`
+ * method : `POST`
 
 **Description :**
 
-Route permettant d'obtenir une liste de tous les rounds, de toutes les parties, enregistrés en BDD.
+Route permettant de lancer un nouveau round d'une partie en cours selon son uuid. Il faut que l'utilisateur qui utilise cette route soit authentifié et participe à la partie.
 
-### PlayerRoundController
+#### getTurn
 
-#### getRound
-
- * url : `/player-round/{uuid}`
+ * url : `/turn/{uuid}`
  * method : `GET`
 
 **Description :**
 
 Route permettant à un utilisateur d'obtenir les informations sur un round. Il faut que l'utilisateur qui utilise cette route soit authentifié et participe à ce round.
 
-#### wageRound
+#### wageTurn
 
- * url : `/player-round/{uuid}/wage`
+ * url : `/turn/{uuid}/wage`
  * method : `PATCH`
 
 **Description :**
@@ -290,7 +257,7 @@ Une fois les mises de tous les joueurs enregistrées, chaque joueur pioche 2 car
 
 #### hitRound
 
- * url : `/player-round/{uuid}/hit`
+ * url : `/turn/{uuid}/hit`
  * method : `PATCH`
 
 **Description :**
@@ -301,7 +268,7 @@ Une fois la carte piochée, le score est calculé pour savoir si le joueur a un 
 
 #### standRound
 
- * url : `/player-round/{uuid}/stand`
+ * url : `/turn/{uuid}/stand`
  * method : `PATCH`
 
 **Description :**

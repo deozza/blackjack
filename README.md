@@ -38,6 +38,7 @@ docker-compose up -d --build
 
 ```bash
 docker-compose exec -u 1000 symfony-blackjack composer install
+docker-compose exec -u 1000 symfony-blackjack php bin/console lexik:jwt:generate-keypair
 docker-compose exec -u 1000 symfony-blackjack composer reset-db
 ```
 
@@ -48,6 +49,11 @@ docker-compose exec -u 1000 symfony-blackjack symfony serve
 ```
 
 L'application sera disponible à l'url `http://127.0.0.1:8888` (ou un autre port si vous avez changé la configuration du service dans le `docker-compose.yml`).
+
+Un compte utilisateur est déjà créé : 
+ * username : admin
+ * email: admin@gmail.com
+ * password: admin
 
 #### Installer la partie Sveltekit
 
