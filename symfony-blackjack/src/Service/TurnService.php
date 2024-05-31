@@ -37,7 +37,7 @@ class TurnService
         }
 
         $turn = $this->generateTurn($game);
-        $cards = self::shuffleDeck(self::generateDeck());
+        $deck = self::shuffleDeck(self::generateDeck());
         $turn->setDeck($deck);
         $turn->setStatus('waging');
 

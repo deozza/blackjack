@@ -75,7 +75,7 @@
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
-                'Bearer': 'Authorization ' + localStorage.getItem('token') || '',
+                'Authorization': 'Bearer ' + localStorage.getItem('token') || '',
             },
             body: JSON.stringify({
 				wager: (document.getElementById('wager') as HTMLInputElement).value
