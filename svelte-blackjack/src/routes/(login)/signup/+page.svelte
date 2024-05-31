@@ -28,7 +28,7 @@
 		})
 		.then(data => {
 			if(data.id !== undefined) {
-				goto('/login');
+				goto('/');
 			}else{
 				errors = data;
 				loading = false;
