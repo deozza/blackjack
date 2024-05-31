@@ -28,7 +28,7 @@
 		})
 		.then(data => {
 			if(data.id !== undefined) {
-				goto('/login');
+				goto('/');
 			}else{
 				errors = data;
 				loading = false;
@@ -46,7 +46,7 @@
 	<h1 class="h1 py-3">Create your account</h1>
 
 	<div>
-		<p>You already have an account ? <a href="/login" class="anchor">Log in !</a></p>
+		<p>You already have an account ? <a href="/" class="anchor">Log in !</a></p>
 	</div>
 
 	<form class="flex flex-col  w-2/3 p-6 " on:submit|preventDefault={(e) => submitCreateAccount(e)}>

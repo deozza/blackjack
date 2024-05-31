@@ -95,6 +95,7 @@ class GameService
         }
 
         $this->em->remove($game);
+        $this->em->flush();
 
         return [null, null];
     }
