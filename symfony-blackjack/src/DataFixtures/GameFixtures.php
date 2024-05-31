@@ -26,7 +26,7 @@ class GameFixtures extends Fixture
             $game->setDateCreation($faker->dateTimeThisYear);
             $game->setLastUpdateDate($faker->dateTimeThisMonth);
 
-            $manager->persist($game);
+            $manager->persist($game); 
         }
 
         $manager->flush();
