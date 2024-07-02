@@ -12,7 +12,7 @@ services:
       - TZ=Europe/Paris
       - HOST=0.0.0.0
     ports:
-      - '8888:8000'
+      - '8889:8000'
     volumes:
       - ./symfony-blackjack/:/home/symfony-blackjack:cached
 
