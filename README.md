@@ -83,3 +83,4 @@ Si des bugs sont rencontrés, il vous sera demander d'écrire des tickets de bug
 
 Votre rendu sera constitué d'un rapport contenant votre analyse et la justification de votre plan de test, des tickets de bugs rédigés ainsi que d'une pull request de votre repository vers le projet d'origine. Si vos tests ont été réalisés avec un outil externe ou sont manuels, veuillez également les joindre à votre rendu
 # blackjack
+# blackjack
