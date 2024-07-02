@@ -10,7 +10,7 @@
       - [Lancer le serveur de développement symfony](#lancer-le-serveur-de-développement-symfony)
       - [Installer la partie Sveltekit](#installer-la-partie-sveltekit)
       - [Lancer le serveur de développement sveltekit](#lancer-le-serveur-de-développement-sveltekit)
-  - [Objectif](#objectif)
+  - [Objectif](#objectif)a
 
 
 ## A propos
