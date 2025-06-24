@@ -1,0 +1,583 @@
+{
+	"info": {
+		"_postman_id": "38ea385e-b62d-4aba-be9b-5a06e6dc967c",
+		"name": "BLACKJACK",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "46114712",
+		"_collection_link": "https://wiwiwi-9730.postman.co/workspace/Team-Workspace~7e98a81d-e610-4fec-83da-0ead6067dbc4/collection/46114712-38ea385e-b62d-4aba-be9b-5a06e6dc967c?action=share&source=collection_link&creator=46114712"
+	},
+	"item": [
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "List of users (admin only)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8888/user",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8888",
+							"path": [
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "My profile",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8888/user/profile",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8888",
+							"path": [
+								"user",
+								"profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get user by UUID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8888/user/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8888",
+							"path": [
+								"user",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login admin",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"admin\",\n    \"password\": \"admin\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8888/login_check",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8888",
+							"path": [
+								"login_check"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login user",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"test1234\",\n    \"password\": \"test1234\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8888/login_check",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8888",
+							"path": [
+								"login_check"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create utilisateur",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"test123@test.com\",\n  \"username\": \"test123\",\n  \"password\": \"test123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8888/user",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8888",
+							"path": [
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove user by UUID",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8888/user/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8888",
+							"path": [
+								"user",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Current user",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8888/user/profile",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8888",
+							"path": [
+								"user",
+								"profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update user by UUID",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8888/user/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8888",
+							"path": [
+								"user",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove user",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8888/user/profile",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8888",
+							"path": [
+								"user",
+								"profile"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Game",
+			"item": [
+				{
+					"name": "Get games",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8888/game",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8888",
+							"path": [
+								"game"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get game limit",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Get Game by Id",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Create Game",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8888/game",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8888",
+							"path": [
+								"game"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Game By Id",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8888/game/afd025eb-2dd3-46a4-983b-77fa7216806b",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8888",
+							"path": [
+								"game",
+								"afd025eb-2dd3-46a4-983b-77fa7216806b"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Turn",
+			"item": [
+				{
+					"name": "Get turn",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3NTA3NTYyNzcsImV4cCI6MTc1MDc1OTg3Nywicm9sZXMiOlsiUk9MRV9VU0VSIl0sInVzZXJuYW1lIjoidGVzdDEyMyJ9.DMcll9amFnmXJp32j5R9bljzzcvlf3ES_xwMg7Ee7Ks-TnpQ0_E8ch1zUXfh0LOqWmf5wkhMoDgD5NJXFsXt8ZH37S587XLp7OlXBiqjCAkDfkP25zF3k8HHHdTJhW2KcHpyDBi7CZJFmI602R653b0BiVfN82Z6yKYsE8RJoRBJhqLzIZhrU_Ozm2ly6MMep5HUrtvSgn1mYXUbxYFQHxKSKw_JZyO3EaI27LaJpZ8pQWp0zlQ47yP7cwXWuwdRNFG2DyFT1VrzOXQr9m6zghZueyJ1QfiC36v24HWYEPrjeMvIPegXcAJs299pXEKlCoVXAnp1nPqajWJ82OshDA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8888/turn/bcba93d6-2d08-4284-a3fb-d90e555eeb31",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8888",
+							"path": [
+								"turn",
+								"bcba93d6-2d08-4284-a3fb-d90e555eeb31"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Wage turn",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3NTA3NTYyNzcsImV4cCI6MTc1MDc1OTg3Nywicm9sZXMiOlsiUk9MRV9VU0VSIl0sInVzZXJuYW1lIjoidGVzdDEyMyJ9.DMcll9amFnmXJp32j5R9bljzzcvlf3ES_xwMg7Ee7Ks-TnpQ0_E8ch1zUXfh0LOqWmf5wkhMoDgD5NJXFsXt8ZH37S587XLp7OlXBiqjCAkDfkP25zF3k8HHHdTJhW2KcHpyDBi7CZJFmI602R653b0BiVfN82Z6yKYsE8RJoRBJhqLzIZhrU_Ozm2ly6MMep5HUrtvSgn1mYXUbxYFQHxKSKw_JZyO3EaI27LaJpZ8pQWp0zlQ47yP7cwXWuwdRNFG2DyFT1VrzOXQr9m6zghZueyJ1QfiC36v24HWYEPrjeMvIPegXcAJs299pXEKlCoVXAnp1nPqajWJ82OshDA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8888/turn/bcba93d6-2d08-4284-a3fb-d90e555eeb31/wage",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8888",
+							"path": [
+								"turn",
+								"bcba93d6-2d08-4284-a3fb-d90e555eeb31",
+								"wage"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create turn",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3NTA3NTYyNzcsImV4cCI6MTc1MDc1OTg3Nywicm9sZXMiOlsiUk9MRV9VU0VSIl0sInVzZXJuYW1lIjoidGVzdDEyMyJ9.DMcll9amFnmXJp32j5R9bljzzcvlf3ES_xwMg7Ee7Ks-TnpQ0_E8ch1zUXfh0LOqWmf5wkhMoDgD5NJXFsXt8ZH37S587XLp7OlXBiqjCAkDfkP25zF3k8HHHdTJhW2KcHpyDBi7CZJFmI602R653b0BiVfN82Z6yKYsE8RJoRBJhqLzIZhrU_Ozm2ly6MMep5HUrtvSgn1mYXUbxYFQHxKSKw_JZyO3EaI27LaJpZ8pQWp0zlQ47yP7cwXWuwdRNFG2DyFT1VrzOXQr9m6zghZueyJ1QfiC36v24HWYEPrjeMvIPegXcAJs299pXEKlCoVXAnp1nPqajWJ82OshDA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8888/game/bcba93d6-2d08-4284-a3fb-d90e555eeb31/turn",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8888",
+							"path": [
+								"game",
+								"bcba93d6-2d08-4284-a3fb-d90e555eeb31",
+								"turn"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Hit turn",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3NTA3NTYyNzcsImV4cCI6MTc1MDc1OTg3Nywicm9sZXMiOlsiUk9MRV9VU0VSIl0sInVzZXJuYW1lIjoidGVzdDEyMyJ9.DMcll9amFnmXJp32j5R9bljzzcvlf3ES_xwMg7Ee7Ks-TnpQ0_E8ch1zUXfh0LOqWmf5wkhMoDgD5NJXFsXt8ZH37S587XLp7OlXBiqjCAkDfkP25zF3k8HHHdTJhW2KcHpyDBi7CZJFmI602R653b0BiVfN82Z6yKYsE8RJoRBJhqLzIZhrU_Ozm2ly6MMep5HUrtvSgn1mYXUbxYFQHxKSKw_JZyO3EaI27LaJpZ8pQWp0zlQ47yP7cwXWuwdRNFG2DyFT1VrzOXQr9m6zghZueyJ1QfiC36v24HWYEPrjeMvIPegXcAJs299pXEKlCoVXAnp1nPqajWJ82OshDA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8888/turn/bcba93d6-2d08-4284-a3fb-d90e555eeb31/hit",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8888",
+							"path": [
+								"turn",
+								"bcba93d6-2d08-4284-a3fb-d90e555eeb31",
+								"hit"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Stand turn",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3NTA3NTYyNzcsImV4cCI6MTc1MDc1OTg3Nywicm9sZXMiOlsiUk9MRV9VU0VSIl0sInVzZXJuYW1lIjoidGVzdDEyMyJ9.DMcll9amFnmXJp32j5R9bljzzcvlf3ES_xwMg7Ee7Ks-TnpQ0_E8ch1zUXfh0LOqWmf5wkhMoDgD5NJXFsXt8ZH37S587XLp7OlXBiqjCAkDfkP25zF3k8HHHdTJhW2KcHpyDBi7CZJFmI602R653b0BiVfN82Z6yKYsE8RJoRBJhqLzIZhrU_Ozm2ly6MMep5HUrtvSgn1mYXUbxYFQHxKSKw_JZyO3EaI27LaJpZ8pQWp0zlQ47yP7cwXWuwdRNFG2DyFT1VrzOXQr9m6zghZueyJ1QfiC36v24HWYEPrjeMvIPegXcAJs299pXEKlCoVXAnp1nPqajWJ82OshDA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8888/turn/bcba93d6-2d08-4284-a3fb-d90e555eeb31/stand",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8888",
+							"path": [
+								"turn",
+								"bcba93d6-2d08-4284-a3fb-d90e555eeb31",
+								"stand"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete turn",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3NTA3NTYyNzcsImV4cCI6MTc1MDc1OTg3Nywicm9sZXMiOlsiUk9MRV9VU0VSIl0sInVzZXJuYW1lIjoidGVzdDEyMyJ9.DMcll9amFnmXJp32j5R9bljzzcvlf3ES_xwMg7Ee7Ks-TnpQ0_E8ch1zUXfh0LOqWmf5wkhMoDgD5NJXFsXt8ZH37S587XLp7OlXBiqjCAkDfkP25zF3k8HHHdTJhW2KcHpyDBi7CZJFmI602R653b0BiVfN82Z6yKYsE8RJoRBJhqLzIZhrU_Ozm2ly6MMep5HUrtvSgn1mYXUbxYFQHxKSKw_JZyO3EaI27LaJpZ8pQWp0zlQ47yP7cwXWuwdRNFG2DyFT1VrzOXQr9m6zghZueyJ1QfiC36v24HWYEPrjeMvIPegXcAJs299pXEKlCoVXAnp1nPqajWJ82OshDA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8888/turn/bcba93d6-2d08-4284-a3fb-d90e555eeb31",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8888",
+							"path": [
+								"turn",
+								"bcba93d6-2d08-4284-a3fb-d90e555eeb31"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3NTA3NTg4OTcsImV4cCI6MTc1MDc2MjQ5Nywicm9sZXMiOlsiUk9MRV9VU0VSIl0sInVzZXJuYW1lIjoidGVzdDEyMzQifQ.d_1zH8G4YsLB8J7rtgh5zWiY72W-S0kCZKfK0F_5uWxMHd7NhhEhe1borKMv5cih4bSN85Ar09sKS-cMBeiEGwhypFvjVI82AABYEgAz_rimxXtjVKGfc-1KYNBrfVxnQkFbFuI-QGgVNiu0dtfuapnIeXiKxBlTqTpa9hKEDubpDzLafNLReXx8TR66NAxFMb5wiwB4N4A4KBoXAyPsiV_6Psqtrz0xqtheKskLyUB87_QNDP4OvGAnMZwSZZp5-B9d02XNhKLZvlU3P-uVCHf-79OJRteysYPqhX0gzf2trwsTnzNgLiTLFTmGr30PWNKPNqELB2awMVD1HKHgdg",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
