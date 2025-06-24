@@ -2,6 +2,7 @@ name: API Pull Request
 on:
   pull_request:
 
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -26,4 +27,5 @@ jobs:
         run: export PATH="$HOME/.symfony5/bin:$PATH"
 
       - name: Install dependencies
+        working-directory: ./symfony-blackjack
         run: composer install
