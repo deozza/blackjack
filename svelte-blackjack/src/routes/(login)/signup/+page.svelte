@@ -28,7 +28,7 @@
 		})
 		.then(data => {
 			if(data.id !== undefined) {
-				goto('/login');
+				goto('/');
 			}else{
 				errors = data;
 				loading = false;
@@ -46,14 +46,14 @@
 	<h1 class="h1 py-3">Create your account</h1>
 
 	<div>
-		<p>You already have an account ? <a href="/login" class="anchor">Log in !</a></p>
+		<p>You already have an account ? <a href="/" class="anchor">Log in !</a></p>
 	</div>
 
 	<form class="flex flex-col  w-2/3 p-6 " on:submit|preventDefault={(e) => submitCreateAccount(e)}>
 
 		<div class="flex justify-around items-center my-6">
 			<label class="text-primary-foreground justify-items-start w-1/2" for="username">Username:</label>
-			<input class="border justify-items-end w-1/2 py-1 rounded text-black" type="text" id="username" name="username" required/>    
+			<input class="border justify-items-start w-1/2 py-1 rounded text-black" type="text" id="username" name="username" required/>    
 		</div>
 
 		{#if errors !== null && errors.username !== undefined}
@@ -62,7 +62,7 @@
 
 		<div class="flex justify-around items-center my-6">
 			<label class="text-primary-foreground justify-items-start w-1/2" for="email">Email:</label>
-			<input class="border justify-items-end w-1/2 py-1 rounded text-black" type="email" id="email" name="email" required/>    
+			<input class="border justify-items-start w-1/2 py-1 rounded text-black" type="email" id="email" name="email" required/>    
 		</div>
 
 		{#if errors !== null && errors.email !== undefined}
@@ -71,7 +71,7 @@
 
 		<div class="flex justify-around items-center my-6">
 			<label class="text-primary-foreground justify-items-start w-1/2" for="password">Password:</label>
-			<input class="border justify-items-end w-1/2 py-1 rounded text-black" type="password" id="password" name="password" required/>
+			<input class="border justify-items-start  w-1/2 py-1 rounded text-black" type="password" id="password" name="password" required/>
 		</div>
 
 		{#if errors !== null && errors.password !== undefined}

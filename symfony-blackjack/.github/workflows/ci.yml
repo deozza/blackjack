@@ -1,0 +1,25 @@
+name: Backend Tests
+
+on: [push, pull_request]
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:13
+        env:
+          POSTGRES_DB: blackjack
+          POSTGRES_USER: symfony
+          POSTGRES_PASSWORD: symfony
+        ports: ['5432:5432']
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+      - name: Install deps
+        run: composer install
+      - name: Run tests
+        run: php bin/phpunit

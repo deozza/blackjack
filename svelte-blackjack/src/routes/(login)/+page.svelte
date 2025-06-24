@@ -45,11 +45,11 @@
 	
 		<div class="flex justify-around items-center my-6">
 			<label class="text-primary-foreground justify-items-start w-1/2" for="username">Username:</label>
-			<input class="border justify-items-end w-1/2 py-1 rounded text-black" type="text" id="username" name="username" required/>    
+			<input class="border justify-items-start w-1/2 py-1 rounded text-black" type="text" id="username" name="username" required/>    
 		</div>
 		<div class="flex justify-around items-center my-6">
 			<label class="text-primary-foreground justify-items-start w-1/2" for="password">Password:</label>
-			<input class="border justify-items-end w-1/2 py-1 rounded text-black" type="password" id="password" name="password" required/>
+			<input class="border justify-items-start w-1/2 py-1 rounded text-black" type="password" id="password" name="password" required/>
 		</div>
 	
 		{#if displayAuthError}
