@@ -22,8 +22,5 @@ jobs:
           SYMFONY_HOME: $HOME/.symfony
         shell: bash
 
-      - name: Add Symfony CLI to PATH
-        run: echo "::add-path::$HOME/.symfony/bin"
-
       - name: Install dependencies
         run: composer install
