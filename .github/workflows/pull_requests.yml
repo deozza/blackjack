@@ -1,0 +1,12 @@
+name: Pull Requests Workflow
+on:
+  pull_request:
+
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: test
+        run: echo "This is a test step in the deploy workflow."
