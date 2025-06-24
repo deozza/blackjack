@@ -29,22 +29,43 @@ class TurnService
         $this->handService = $handService;
     }
 
-    public function createNewTurn(Game $game): array
-    {
-        list($_, $err) = $this->checkIsAbleToCreateNewTurn($game);
-        if($err instanceof \Error) {
-            return [null, $err];
+public function createNewTurn(Game $game): array
+{
+    try {
+        // Vérifier si on peut créer un nouveau tour
+        [$gameCheck, $error] = $this->checkIsAbleToCreateNewTurn($game);
+        if ($error instanceof \Error) {
+            return [null, $error];
         }
-
-        $turn = $this->generateTurn($game);
-        $cards = self::shuffleDeck(self::generateDeck());
+        
+        $turn = new Turn();
+        $turn->setGame($game);
+        $turn->setStatus('created');
+        
+        // Générer un deck de cartes complet (52 cartes)
+        $deck = $this->generateDeck();
         $turn->setDeck($deck);
-        $turn->setStatus('waging');
-
+        
+        // Définir les dates
+        $turn->setCreationDate(new \DateTime());
+        $turn->setLastUpdateDate(new \DateTime());
+        
+        // Enregistrer le tour dans la base de données
         $this->turnRepository->save($turn, true);
-
+        
+        // Changer le statut du jeu à "playing" s'il est en "created"
+        if ($game->getStatus() === 'created') {
+            $game->setStatus('playing');
+            $this->em->persist($game);
+            $this->em->flush();
+        }
+        
         return [$turn, null];
+    } catch (\Exception $e) {
+        return [null, new \Error('Error creating turn: ' . $e->getMessage(), 500)];
     }
+}
+
 
     public function checkIsAbleToCreateNewTurn(Game $game): array
     {
@@ -75,19 +96,19 @@ class TurnService
     }
 
     public static function generateDeck(): array
-    {
-        $suits = ['heart', 'diamond', 'club', 'spade'];
-        $values = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+{
+    $suits = ['heart', 'diamond', 'club', 'spade'];
+    $values = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
 
-        $deck = [];
-        foreach ($suits as $suit) {
-            foreach ($values as $value) {
-                $deck[] = new Card($suit, $value);
-            }
+    $deck = [];
+    foreach ($suits as $suit) {
+        foreach ($values as $value) {
+            $deck[] = new Card($suit, $value);
         }
-
-        return $deck;
     }
+
+    return $deck;
+}
 
     public static function shuffleDeck(array $deck): array
     {
