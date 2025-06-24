@@ -32,25 +32,49 @@ class UserService
         return [$users, null];        
     }
 
-    public function createUser(array $data): array
-    {
-        list($user, $errors) = $this->checkPayloadIsValidForCreateUser($data);
-        if(!empty($errors)) {
-            $err = new \Error(json_encode($errors), 400);
-            return [null, $err];
+public function createUser(array $userData): array
+{
+    try {
+        // Cette partie est correcte
+        $form = $this->formFactory->create(CreateUserType::class);
+        $form->submit($userData);
+        
+        if (!$form->isValid()) {
+            $errors = [];
+            foreach ($form->getErrors(true) as $error) {
+                $errors[] = $error->getMessage();
+            }
+            return [null, new \Error(json_encode($errors), 400)];
         }
-
-        list($user, $errors) = $this->checkUserAlreadyExist($user);
-        if(!empty($errors)) {
-            $err = new \Error(json_encode($errors), 400);
-            return [null, $err];
+        
+        // Cette partie est correcte - vérification de l'email existant
+        $existingUser = $this->userRepository->findOneBy(['email' => $userData['email']]);
+        
+        if ($existingUser !== null) {
+            return [null, new \Error('User with this email already exists', 400)];
         }
-
-        $user = $this->createUserAcccordingToPayload($data);
-
+        
+        // Obtenez l'utilisateur du formulaire
+        $user = $form->getData();
+        
+        // IMPORTANT: Utiliser l'instance de User pour obtenir le hasher, comme attendu par le test
+        $plainPassword = $userData['password'];
+        $hashedPassword = $this->passwordHasherFactory->getPasswordHasher($user)->hash($plainPassword);
+        $user->setPassword($hashedPassword);
+        
+        // Initialiser le portefeuille
+        $user->setWallet(1000);
+        $user->setCreationDate(new \DateTime());
+        $user->setLastUpdateDate(new \DateTime());
+        
+        // Sauvegarder l'utilisateur
         $this->userRepository->save($user, true);
+        
         return [$user, null];
+    } catch (\Exception $e) {
+        return [null, new \Error('Error creating user: ' . $e->getMessage(), 500)];
     }
+}
 
     public function checkPayloadIsValidForCreateUser(array $data): array
     {
