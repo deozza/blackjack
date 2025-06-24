@@ -1,0 +1,17 @@
+name: API Pull Request
+on:
+  pull_request:
+    paths:
+      - "./symfony-blackjack/**"
+      - .github/workflows/api.pr.yml
+defaults:
+  run:
+    working-directory: ./symfony-blackjack/**
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: test
+        run: echo "This is a test step in the deploy workflow."
