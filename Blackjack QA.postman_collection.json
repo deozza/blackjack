@@ -1,0 +1,714 @@
+{
+	"info": {
+		"_postman_id": "8d9f7cee-acda-4339-b219-39e292446f31",
+		"name": "Blackjack QA",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "32160971"
+	},
+	"item": [
+		{
+			"name": "login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const username = pm.iterationData.get(\"username\");\r",
+							"const password = pm.iterationData.get(\"password\");\r",
+							"\r",
+							"if (username === \"admin\" && password === \"admin\") {\r",
+							"    pm.test(\"Should return 200 for valid credentials\", function () {\r",
+							"        pm.response.to.have.status(200);\r",
+							"    });\r",
+							"} else if (username && password) {\r",
+							"    pm.test(\"Should return 401 for invalid credentials\", function () {\r",
+							"        pm.response.to.have.status(401);\r",
+							"    });\r",
+							"} else {\r",
+							"    pm.test(\"Should return 400 for missing or empty credentials\", function () {\r",
+							"        pm.response.to.have.status(400);\r",
+							"    });\r",
+							"}\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"{{username}}\",\r\n    \"password\": \"{{password}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8888/login_check",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8888",
+					"path": [
+						"login_check"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getUserList",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Vérifie que le token a bien été envoyé dans le header Authorization\r",
+							"const requestToken = pm.request.headers.get(\"Authorization\");\r",
+							"const statusCode = pm.response.code;\r",
+							"\r",
+							"// Test : le token doit être présent\r",
+							"pm.test(\"Token must be sent in Authorization header\", function () {\r",
+							"    pm.expect(requestToken, \"Missing Authorization header\").to.exist;\r",
+							"    pm.expect(requestToken, \"Authorization header is empty\").to.match(/^Bearer\\s.+$/);\r",
+							"});\r",
+							"\r",
+							"// Test : l'accès doit être refusé si pas de token ou pas admin\r",
+							"if (statusCode === 200) {\r",
+							"    pm.test(\"Access granted: status 200\", function () {\r",
+							"        const json = pm.response.json();\r",
+							"        pm.expect(json).to.be.an(\"object\");\r",
+							"        pm.expect(json.users || json).to.be.an(\"array\");\r",
+							"    });\r",
+							"} else {\r",
+							"    // On échoue explicitement si la requête ne retourne pas 200\r",
+							"    pm.test(\"Access denied: should fail without token or if not admin\", function () {\r",
+							"        pm.expect.fail(`Expected status 200 but got ${statusCode}. Check if token is missing or user lacks ROLE_ADMIN.`);\r",
+							"    });\r",
+							"}\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3NTA3NTc2NzAsImV4cCI6MTc1MDc2MTI3MCwicm9sZXMiOlsiUk9MRV9BRE1JTiIsIlJPTEVfVVNFUiJdLCJ1c2VybmFtZSI6ImFkbWluIn0.oi37dCU-J6mpftKs-p5bIZGEQvVlea9AZsyAJlySSRsNMHfT7HqEBPMN_xhvWeWrsXaAKC9LeIXlIkK1JNelslcbMSZV-3um_WD5YpRIf_oaKFYcigAuP7I07FaJN522zMqRWeuDNdKihKHvhKOmDQpa5TPV6icUcin9pXVwspteCpDoRyFGhbcCh3FTyPsY7B6QJsGGOtBlOW3VrnaAiFRebGQGfXasAU3TflgAlKeHzBSuKnEKR1UICIOdZg8-d6a-CAaPKBpb1QF9KeKAUskf-NJKCllKgS3dOisGDVuyrHT0UiTcpJIlpWAkZfRlO6PRCRl7jPJHYoPFNUvpHg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"admin\",\r\n    \"password\": \"admin\"\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8888/user",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8888",
+					"path": [
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "postUser",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let status = pm.response.code;\r",
+							"let json = {};\r",
+							"\r",
+							"try {\r",
+							"    json = pm.response.json();\r",
+							"} catch (e) {\r",
+							"    json = null;\r",
+							"}\r",
+							"\r",
+							"if (status === 201) {\r",
+							"    pm.test(\"User successfully created (201)\", function () {\r",
+							"        pm.expect(json).to.have.property(\"id\");\r",
+							"        pm.expect(json).to.have.property(\"username\");\r",
+							"    });\r",
+							"} else if (status === 400) {\r",
+							"    pm.test(\"Validation failed (400)\", function () {\r",
+							"        pm.expect(status).to.eql(400);\r",
+							"    });\r",
+							"} else {\r",
+							"    pm.test(\"Unexpected status code\", function () {\r",
+							"        pm.expect([201, 400]).to.include(status);\r",
+							"    });\r",
+							"}\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"username\": \"{{username}}\",\r\n  \"email\": \"{{email}}\",\r\n  \"password\": \"{{password}}\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8888/user",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8888",
+					"path": [
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getCurrentUserInfos",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const status = pm.response.code;\r",
+							"\r",
+							"pm.test(\"Authorization token must be present\", function () {\r",
+							"    const token = pm.request.headers.get(\"Authorization\");\r",
+							"    pm.expect(token, \"Missing Authorization header\").to.exist;\r",
+							"    pm.expect(token).to.match(/^Bearer\\s.+$/);\r",
+							"});\r",
+							"\r",
+							"if (status === 200) {\r",
+							"    pm.test(\"Status code is 200 - Authenticated access\", function () {\r",
+							"        pm.response.to.have.status(200);\r",
+							"    });\r",
+							"\r",
+							"    const user = pm.response.json();\r",
+							"\r",
+							"    pm.test(\"User profile contains expected fields\", function () {\r",
+							"        pm.expect(user).to.have.property(\"id\");\r",
+							"        pm.expect(user).to.have.property(\"username\");\r",
+							"        pm.expect(user).to.have.property(\"email\");\r",
+							"        pm.expect(user).to.have.property(\"roles\");\r",
+							"        pm.expect(user).to.have.property(\"creationDate\");\r",
+							"    });\r",
+							"} else {\r",
+							"    pm.test(\"Should return 401 if not authenticated\", function () {\r",
+							"        pm.expect(status).to.eql(401);\r",
+							"    });\r",
+							"}\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3NTA3NTc2NzAsImV4cCI6MTc1MDc2MTI3MCwicm9sZXMiOlsiUk9MRV9BRE1JTiIsIlJPTEVfVVNFUiJdLCJ1c2VybmFtZSI6ImFkbWluIn0.oi37dCU-J6mpftKs-p5bIZGEQvVlea9AZsyAJlySSRsNMHfT7HqEBPMN_xhvWeWrsXaAKC9LeIXlIkK1JNelslcbMSZV-3um_WD5YpRIf_oaKFYcigAuP7I07FaJN522zMqRWeuDNdKihKHvhKOmDQpa5TPV6icUcin9pXVwspteCpDoRyFGhbcCh3FTyPsY7B6QJsGGOtBlOW3VrnaAiFRebGQGfXasAU3TflgAlKeHzBSuKnEKR1UICIOdZg8-d6a-CAaPKBpb1QF9KeKAUskf-NJKCllKgS3dOisGDVuyrHT0UiTcpJIlpWAkZfRlO6PRCRl7jPJHYoPFNUvpHg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8888/user/profile",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8888",
+					"path": [
+						"user",
+						"profile"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getUserInfos",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const status = pm.response.code;\r",
+							"const uuid = pm.variables.get(\"uuid\");\r",
+							"\r",
+							"pm.test(\"UUID must be provided\", function () {\r",
+							"    pm.expect(uuid, \"Variable uuid is missing\").to.exist;\r",
+							"    pm.expect(uuid, \"Variable uuid is empty\").to.not.eql(\"\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"UUID must match standard UUID format\", function () {\r",
+							"    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;\r",
+							"    pm.expect(uuid, \"Invalid UUID format\").to.match(uuidRegex);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Authorization header is present\", function () {\r",
+							"    const token = pm.request.headers.get(\"Authorization\");\r",
+							"    pm.expect(token, \"Missing or empty Authorization header\").to.match(/^Bearer\\s.+$/);\r",
+							"});\r",
+							"\r",
+							"if (status === 200) {\r",
+							"    const user = pm.response.json();\r",
+							"\r",
+							"    pm.test(\"Access granted - Status 200\", function () {\r",
+							"        pm.expect(status).to.eql(200);\r",
+							"    });\r",
+							"\r",
+							"    pm.test(\"Returned user matches UUID and contains expected fields\", function () {\r",
+							"        pm.expect(user).to.have.property(\"id\");\r",
+							"        pm.expect(user.id).to.eql(uuid);\r",
+							"        pm.expect(user).to.have.property(\"email\");\r",
+							"        pm.expect(user).to.have.property(\"roles\");\r",
+							"        pm.expect(user).to.have.property(\"username\");\r",
+							"    });\r",
+							"\r",
+							"} else if (status === 404) {\r",
+							"    pm.test(\"User not found with given UUID\", function () {\r",
+							"        pm.expect(status).to.eql(404);\r",
+							"    });\r",
+							"\r",
+							"} else if ([401, 403].includes(status)) {\r",
+							"    pm.test(\"Access denied (not admin or not authenticated)\", function () {\r",
+							"        pm.expect([401, 403]).to.include(status);\r",
+							"    });\r",
+							"\r",
+							"} else {\r",
+							"    pm.test(\"Unexpected error code\", function () {\r",
+							"        pm.expect.fail(`Unexpected response code: ${status}`);\r",
+							"    });\r",
+							"}\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3NTA3NTc2NzAsImV4cCI6MTc1MDc2MTI3MCwicm9sZXMiOlsiUk9MRV9BRE1JTiIsIlJPTEVfVVNFUiJdLCJ1c2VybmFtZSI6ImFkbWluIn0.oi37dCU-J6mpftKs-p5bIZGEQvVlea9AZsyAJlySSRsNMHfT7HqEBPMN_xhvWeWrsXaAKC9LeIXlIkK1JNelslcbMSZV-3um_WD5YpRIf_oaKFYcigAuP7I07FaJN522zMqRWeuDNdKihKHvhKOmDQpa5TPV6icUcin9pXVwspteCpDoRyFGhbcCh3FTyPsY7B6QJsGGOtBlOW3VrnaAiFRebGQGfXasAU3TflgAlKeHzBSuKnEKR1UICIOdZg8-d6a-CAaPKBpb1QF9KeKAUskf-NJKCllKgS3dOisGDVuyrHT0UiTcpJIlpWAkZfRlO6PRCRl7jPJHYoPFNUvpHg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8888/user/{uuid}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8888",
+					"path": [
+						"user",
+						"{uuid}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "patchCurrentUserInfos",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const status = pm.response.code;\r",
+							"\r",
+							"pm.test(\"Authorization header is present\", function () {\r",
+							"    const token = pm.request.headers.get(\"Authorization\");\r",
+							"    pm.expect(token, \"Missing Authorization\").to.match(/^Bearer\\s.+$/);\r",
+							"});\r",
+							"\r",
+							"if (status === 200) {\r",
+							"    const user = pm.response.json();\r",
+							"\r",
+							"    pm.test(\"User successfully updated\", function () {\r",
+							"        pm.expect(user).to.have.property(\"id\");\r",
+							"        pm.expect(user).to.have.property(\"username\");\r",
+							"        pm.expect(user).to.have.property(\"email\");\r",
+							"    });\r",
+							"\r",
+							"    pm.test(\"Updated fields match input\", function () {\r",
+							"        const requestBody = pm.request.body.raw ? JSON.parse(pm.request.body.raw) : {};\r",
+							"        if (requestBody.username) {\r",
+							"            pm.expect(user.username).to.eql(requestBody.username);\r",
+							"        }\r",
+							"        if (requestBody.email) {\r",
+							"            pm.expect(user.email).to.eql(requestBody.email);\r",
+							"        }\r",
+							"    });\r",
+							"} else if (status === 400) {\r",
+							"    pm.test(\"Invalid input - validation failed\", function () {\r",
+							"        pm.expect(status).to.eql(400);\r",
+							"    });\r",
+							"} else if (status === 401) {\r",
+							"    pm.test(\"Not authenticated\", function () {\r",
+							"        pm.expect(status).to.eql(401);\r",
+							"    });\r",
+							"} else {\r",
+							"    pm.test(\"Unexpected response\", function () {\r",
+							"        pm.expect.fail(`Unexpected status code: ${status}`);\r",
+							"    });\r",
+							"}\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3NTA3NTc2NzAsImV4cCI6MTc1MDc2MTI3MCwicm9sZXMiOlsiUk9MRV9BRE1JTiIsIlJPTEVfVVNFUiJdLCJ1c2VybmFtZSI6ImFkbWluIn0.oi37dCU-J6mpftKs-p5bIZGEQvVlea9AZsyAJlySSRsNMHfT7HqEBPMN_xhvWeWrsXaAKC9LeIXlIkK1JNelslcbMSZV-3um_WD5YpRIf_oaKFYcigAuP7I07FaJN522zMqRWeuDNdKihKHvhKOmDQpa5TPV6icUcin9pXVwspteCpDoRyFGhbcCh3FTyPsY7B6QJsGGOtBlOW3VrnaAiFRebGQGfXasAU3TflgAlKeHzBSuKnEKR1UICIOdZg8-d6a-CAaPKBpb1QF9KeKAUskf-NJKCllKgS3dOisGDVuyrHT0UiTcpJIlpWAkZfRlO6PRCRl7jPJHYoPFNUvpHg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"username\": \"admin_updated\",\r\n  \"email\": \"admin_updated@example.com\",\r\n  \"password\": \"newsecurepassword\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8888/user/profile",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8888",
+					"path": [
+						"user",
+						"profile"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "patchUserInfos",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const status = pm.response.code;\r",
+							"const uuid = pm.variables.get(\"uuid\");\r",
+							"\r",
+							"pm.test(\"uuid must be valid\", function () {\r",
+							"    pm.expect(uuid, \"Missing uuid\").to.exist;\r",
+							"    pm.expect(uuid, \"Invalid UUID\").to.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Authorization header is present\", function () {\r",
+							"    const token = pm.request.headers.get(\"Authorization\");\r",
+							"    pm.expect(token).to.match(/^Bearer\\s.+$/);\r",
+							"});\r",
+							"\r",
+							"if (status === 200) {\r",
+							"    const user = pm.response.json();\r",
+							"\r",
+							"    pm.test(\"User successfully updated\", function () {\r",
+							"        pm.expect(user).to.have.property(\"id\");\r",
+							"        pm.expect(user.id).to.eql(uuid);\r",
+							"    });\r",
+							"\r",
+							"    pm.test(\"Updated fields match input\", function () {\r",
+							"        const requestBody = pm.request.body.raw ? JSON.parse(pm.request.body.raw) : {};\r",
+							"        if (requestBody.username) {\r",
+							"            pm.expect(user.username).to.eql(requestBody.username);\r",
+							"        }\r",
+							"        if (requestBody.email) {\r",
+							"            pm.expect(user.email).to.eql(requestBody.email);\r",
+							"        }\r",
+							"    });\r",
+							"} else if (status === 400) {\r",
+							"    pm.test(\"Validation failed (400)\", function () {\r",
+							"        pm.expect(status).to.eql(400);\r",
+							"    });\r",
+							"} else if ([401, 403].includes(status)) {\r",
+							"    pm.test(\"Access denied (401/403)\", function () {\r",
+							"        pm.expect([401, 403]).to.include(status);\r",
+							"    });\r",
+							"} else if (status === 404) {\r",
+							"    pm.test(\"User not found (404)\", function () {\r",
+							"        pm.expect(status).to.eql(404);\r",
+							"    });\r",
+							"} else {\r",
+							"    pm.test(\"Unexpected status code\", function () {\r",
+							"        pm.expect.fail(`Unexpected status code: ${status}`);\r",
+							"    });\r",
+							"}\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3NTA3NTc2NzAsImV4cCI6MTc1MDc2MTI3MCwicm9sZXMiOlsiUk9MRV9BRE1JTiIsIlJPTEVfVVNFUiJdLCJ1c2VybmFtZSI6ImFkbWluIn0.oi37dCU-J6mpftKs-p5bIZGEQvVlea9AZsyAJlySSRsNMHfT7HqEBPMN_xhvWeWrsXaAKC9LeIXlIkK1JNelslcbMSZV-3um_WD5YpRIf_oaKFYcigAuP7I07FaJN522zMqRWeuDNdKihKHvhKOmDQpa5TPV6icUcin9pXVwspteCpDoRyFGhbcCh3FTyPsY7B6QJsGGOtBlOW3VrnaAiFRebGQGfXasAU3TflgAlKeHzBSuKnEKR1UICIOdZg8-d6a-CAaPKBpb1QF9KeKAUskf-NJKCllKgS3dOisGDVuyrHT0UiTcpJIlpWAkZfRlO6PRCRl7jPJHYoPFNUvpHg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"username\": \"bob_updated\",\r\n  \"email\": \"bob_updated@example.com\",\r\n  \"password\": \"newpassword123\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8888/user/{{target_uuid}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8888",
+					"path": [
+						"user",
+						"{{target_uuid}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "deleteCurrentUserInfos",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const status = pm.response.code;\r",
+							"\r",
+							"pm.test(\"Authorization header is present\", function () {\r",
+							"    const token = pm.request.headers.get(\"Authorization\");\r",
+							"    pm.expect(token, \"Missing or empty Authorization header\").to.match(/^Bearer\\s.+$/);\r",
+							"});\r",
+							"\r",
+							"if (status === 204) {\r",
+							"    pm.test(\"User successfully deleted (204)\", function () {\r",
+							"        pm.expect(status).to.eql(204);\r",
+							"    });\r",
+							"} else if (status === 401) {\r",
+							"    pm.test(\"Unauthorized - must be authenticated\", function () {\r",
+							"        pm.expect(status).to.eql(401);\r",
+							"    });\r",
+							"} else {\r",
+							"    pm.test(\"Unexpected status code\", function () {\r",
+							"        pm.expect.fail(`Expected 204 or 401 but got ${status}`);\r",
+							"    });\r",
+							"}\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3NTA3NTc2NzAsImV4cCI6MTc1MDc2MTI3MCwicm9sZXMiOlsiUk9MRV9BRE1JTiIsIlJPTEVfVVNFUiJdLCJ1c2VybmFtZSI6ImFkbWluIn0.oi37dCU-J6mpftKs-p5bIZGEQvVlea9AZsyAJlySSRsNMHfT7HqEBPMN_xhvWeWrsXaAKC9LeIXlIkK1JNelslcbMSZV-3um_WD5YpRIf_oaKFYcigAuP7I07FaJN522zMqRWeuDNdKihKHvhKOmDQpa5TPV6icUcin9pXVwspteCpDoRyFGhbcCh3FTyPsY7B6QJsGGOtBlOW3VrnaAiFRebGQGfXasAU3TflgAlKeHzBSuKnEKR1UICIOdZg8-d6a-CAaPKBpb1QF9KeKAUskf-NJKCllKgS3dOisGDVuyrHT0UiTcpJIlpWAkZfRlO6PRCRl7jPJHYoPFNUvpHg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8888/user/profile",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8888",
+					"path": [
+						"user",
+						"profile"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "deleteUserInfos",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const status = pm.response.code;\r",
+							"const uuid = pm.variables.get(\"target_uuid\");\r",
+							"\r",
+							"pm.test(\"target_uuid must be valid\", function () {\r",
+							"    pm.expect(uuid, \"Missing target_uuid\").to.exist;\r",
+							"    pm.expect(uuid, \"Invalid UUID\").to.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Authorization header is present\", function () {\r",
+							"    const token = pm.request.headers.get(\"Authorization\");\r",
+							"    pm.expect(token).to.match(/^Bearer\\s.+$/);\r",
+							"});\r",
+							"\r",
+							"if (status === 204) {\r",
+							"    pm.test(\"User successfully deleted by admin (204)\", function () {\r",
+							"        pm.expect(status).to.eql(204);\r",
+							"    });\r",
+							"} else if ([401, 403].includes(status)) {\r",
+							"    pm.test(\"Access denied - not admin or not authenticated\", function () {\r",
+							"        pm.expect([401, 403]).to.include(status);\r",
+							"    });\r",
+							"} else if (status === 404) {\r",
+							"    pm.test(\"User not found with given UUID\", function () {\r",
+							"        pm.expect(status).to.eql(404);\r",
+							"    });\r",
+							"} else {\r",
+							"    pm.test(\"Unexpected status code\", function () {\r",
+							"        pm.expect.fail(`Expected 204, 401, 403 or 404 but got ${status}`);\r",
+							"    });\r",
+							"}\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3NTA3NTc2NzAsImV4cCI6MTc1MDc2MTI3MCwicm9sZXMiOlsiUk9MRV9BRE1JTiIsIlJPTEVfVVNFUiJdLCJ1c2VybmFtZSI6ImFkbWluIn0.oi37dCU-J6mpftKs-p5bIZGEQvVlea9AZsyAJlySSRsNMHfT7HqEBPMN_xhvWeWrsXaAKC9LeIXlIkK1JNelslcbMSZV-3um_WD5YpRIf_oaKFYcigAuP7I07FaJN522zMqRWeuDNdKihKHvhKOmDQpa5TPV6icUcin9pXVwspteCpDoRyFGhbcCh3FTyPsY7B6QJsGGOtBlOW3VrnaAiFRebGQGfXasAU3TflgAlKeHzBSuKnEKR1UICIOdZg8-d6a-CAaPKBpb1QF9KeKAUskf-NJKCllKgS3dOisGDVuyrHT0UiTcpJIlpWAkZfRlO6PRCRl7jPJHYoPFNUvpHg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/user/{{target_uuid}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"user",
+						"{{target_uuid}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
