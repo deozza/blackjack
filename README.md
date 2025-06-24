@@ -1,5 +1,8 @@
 # Blackjack - Une application en Symfony et en Sveltekit pour s'entrainer à la QA
 
+Equipe Front : Arthur et Jules
+Equipe Back : Thierry Hyppolite
+
 ## Table des matières
 
 <!--toc:start-->

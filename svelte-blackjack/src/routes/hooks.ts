@@ -3,9 +3,9 @@ import { redirect } from '@sveltejs/kit';
 
 export const handle = (async ({ event, resolve }) => {
 
-    const token: string | null = localStorage.getItem('token');
+    const token = event.cookies.get('token');
     
-    if (token !== null) {
+    if (token !== undefined && token !== null && token !== '') {
         if (event.url.pathname.startsWith('/user')) {
             return await resolve(event);
         }
