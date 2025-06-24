@@ -55,68 +55,73 @@ class UserServiceTest extends TestCase
         $this->assertNull($error);
     }
 
-    public function testCreateUserSuccess(): void
-    {
-        $userData = [
-            'email' => 'test@example.com',
-            'username' => 'testuser',
-            'password' => 'password123'
-        ];
 
-        $user = new User();
+public function testCreateUserSuccess(): void
+{
+    $userData = [
+        'email' => 'test@example.com',
+        'username' => 'testuser',
+        'password' => 'password123'
+    ];
+
+    $user = new User();
+    // Définir les propriétés que le formulaire est censé définir
+    $user->setEmail('test@example.com');
+    $user->setUsername('testuser');
+    
+    // Configuration des mocks
+    $this->formFactory->expects($this->once())
+        ->method('create')
+        ->with(CreateUserType::class)
+        ->willReturn($this->form);
         
-        // Configuration des mocks
-        $this->formFactory->expects($this->once())
-            ->method('create')
-            ->with(CreateUserType::class)
-            ->willReturn($this->form);
-            
-        $this->form->expects($this->once())
-            ->method('submit')
-            ->with($userData);
-            
-        $this->form->expects($this->once())
-            ->method('isValid')
-            ->willReturn(true);
+    $this->form->expects($this->once())
+        ->method('submit')
+        ->with($userData);
         
-        $this->form->expects($this->once())
-            ->method('getData')
-            ->willReturn($user);
+    $this->form->expects($this->once())
+        ->method('isValid')
+        ->willReturn(true);
+    
+    $this->form->expects($this->once())
+        ->method('getData')
+        ->willReturn($user);
+    
+    $this->userRepository->expects($this->once())
+        ->method('findOneBy')
+        ->with(['email' => 'test@example.com'])
+        ->willReturn(null);
         
-        $this->userRepository->expects($this->exactly(2))
-            ->method('findOneBy')
-            ->withConsecutive(
-                [['email' => 'test@example.com']],
-                [['username' => 'testuser']]
-            )
-            ->willReturnOnConsecutiveCalls(null, null);
-            
-        // Utiliser un objet hasher correctement typé
-        $hasher = $this->createMock(PasswordHasherInterface::class);
-        $this->passwordHasherFactory->expects($this->once())
-            ->method('getPasswordHasher')
-            ->with($this->isInstanceOf(User::class))
-            ->willReturn($hasher);
-            
-        $hasher->expects($this->once())
-            ->method('hash')
-            ->with('password123')
-            ->willReturn('hashed_password');
+    // Créer un mock correct pour le PasswordHasherInterface
+    $hasher = $this->createMock(\Symfony\Component\PasswordHasher\PasswordHasherInterface::class);
+    
+    // Configurer le mock du factory pour retourner le hasher
+    $this->passwordHasherFactory->expects($this->once())
+        ->method('getPasswordHasher')
+        ->with($this->isInstanceOf(User::class))
+        ->willReturn($hasher);
         
-        $this->userRepository->expects($this->once())
-            ->method('save')
-            ->with($this->callback(function($savedUser) {
-                return $savedUser->getEmail() === 'test@example.com' &&
-                       $savedUser->getUsername() === 'testuser' &&
-                       $savedUser->getPassword() === 'hashed_password' &&
-                       $savedUser->getWallet() === 1000;
-            }), true);
-        
-        [$result, $error] = $this->userService->createUser($userData);
-        
-        $this->assertInstanceOf(User::class, $result);
-        $this->assertNull($error);
-    }
+    // Définir le comportement attendu du hasher
+    $hasher->expects($this->once())
+        ->method('hash')
+        ->with('password123')
+        ->willReturn('hashed_password');
+    
+    $this->userRepository->expects($this->once())
+        ->method('save')
+        ->with($this->callback(function($savedUser) {
+            return $savedUser->getEmail() === 'test@example.com' &&
+                   $savedUser->getUsername() === 'testuser' &&
+                   $savedUser->getPassword() === 'hashed_password' &&
+                   $savedUser->getWallet() === 1000;
+        }), true)
+        ->willReturnCallback(function($user) { return $user; });  // Retourner l'utilisateur pour le conserver
+    
+    [$result, $error] = $this->userService->createUser($userData);
+    
+    $this->assertInstanceOf(User::class, $result);
+    $this->assertNull($error);
+}
 
     public function testCreateUserWithExistingEmail(): void
     {

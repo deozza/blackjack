@@ -43,8 +43,16 @@ public function createNewTurn(Game $game): array
         $turn->setStatus('created');
         
         // Générer un deck de cartes complet (52 cartes)
-        $deck = $this->generateDeck();
-        $turn->setDeck($deck);
+        $deck = self::generateDeck();
+        // Mélanger le deck
+        $shuffledDeck = self::shuffleDeck($deck);
+        $turn->setDeck($shuffledDeck);
+        
+        // Initialiser les mains du joueur et du dealer
+        $playerHand = new Hand();
+        $dealerHand = new Hand();
+        $turn->setPlayerHand($playerHand);
+        $turn->setDealerHand($dealerHand);
         
         // Définir les dates
         $turn->setCreationDate(new \DateTime());
@@ -132,32 +140,54 @@ public function createNewTurn(Game $game): array
     }
 
     public function wageTurn(string $id, User $user, array $data): array
-    {
-        list($turn, $err) = $this->getTurn($id, $user);
-        if($err instanceof \Error) {
+{
+    try {
+        [$turn, $err] = $this->getTurn($id, $user);
+        if ($err instanceof \Error) {
             return [null, $err];
         }
 
-        if($turn->getStatus() !== 'waging') {
-            return [null, new \Error('You can not wage this turn', 409)];
+        if ($turn->getStatus() !== 'waging') {
+            return [null, new \Error('You cannot wage this turn', 409)];
         }
 
-        list($turn, $errors) = $this->checkPayloadIsValidForWageTurn($data, $turn);
-        if(!empty($errors)) {
-            $err = new \Error(json_encode($errors), 400);
-            return [null, $err];
+        // S'assurer que la mise est présente dans les données
+        if (!isset($data['wager']) || !is_numeric($data['wager'])) {
+            return [null, new \Error('Invalid wager amount', 400)];
         }
-
-        $user->setWallet($user->getWallet() - $turn->getWager());
+        
+        $wager = (int)$data['wager'];
+        
+        // Vérifier que la mise est valide
+        if ($wager <= 0) {
+            return [null, new \Error('Wager must be positive', 400)];
+        }
+        
+        if ($wager > $user->getWallet()) {
+            return [null, new \Error('Not enough funds', 400)];
+        }
+        
+        // Définir explicitement la mise pour le tour
+        $turn->setWager($wager);
+        
+        // Soustraire la mise du portefeuille de l'utilisateur
+        $user->setWallet($user->getWallet() - $wager);
         $user->setLastUpdateDate(new \DateTime());
-        $this->em->getRepository(User::class)->save($user);
-
-        $turn->setLastUpdateDate(new \DateTime());
+        
+        // Mettre à jour le statut du tour
         $turn->setStatus('initializing');
-        $this->em->getRepository(Turn::class)->save($turn);
-
+        $turn->setLastUpdateDate(new \DateTime());
+        
+        // Sauvegarder les modifications
+        $this->em->persist($user);
+        $this->em->persist($turn);
+        $this->em->flush();
+        
         return [$turn, null];
+    } catch (\Exception $e) {
+        return [null, new \Error('Error waging turn: ' . $e->getMessage(), 500)];
     }
+}
 
     public function checkPayloadIsValidForWageTurn(array $data, Turn $turn): array
     {
@@ -291,32 +321,49 @@ public function createNewTurn(Game $game): array
     }
 
     public function dealerAutoDraw(Turn $turn): array
-    {
-        if($turn->getStatus() !== 'dealer') {
-            return [null, new \Error('You can not draw a card', 409)];
+{
+    try {
+        if ($turn->getStatus() !== 'dealer') {
+            return [null, new \Error('You cannot draw a card at this time', 409)];
         }
 
-        while($turn->getDealerHand()->getScore() < 17) {
-            list($card, $err) = $this->drawTopCard($turn);
-            if($err instanceof \Error) {
-                return [null, $err];
-            }
-
-            $turn->getDealerHand()->addCard($card);
-
-            list($hand, $err) = $this->handService->calculateScore($turn->getDealerHand());
-            if($err instanceof \Error) {
-                return [null, $err];
+        $dealerHand = $turn->getDealerHand();
+        $deck = $turn->getDeck();
+        
+        // Le croupier tire des cartes jusqu'à ce qu'il atteigne au moins 17
+        while ($dealerHand->getScore() < 17) {
+            // S'il n'y a plus de cartes, créer un nouveau deck
+            if (count($deck) === 0) {
+                $deck = self::shuffleDeck(self::generateDeck());
+                $turn->setDeck($deck);
             }
             
-            $turn->setDealerHand($hand);
+            // Piocher une carte
+            $card = array_shift($deck);
+            $dealerHand->addCard($card);
+            $turn->setDeck($deck);
+            
+            // Recalculer le score de la main
+            [$updatedHand, $error] = $this->handService->calculateScore($dealerHand);
+            if ($error instanceof \Error) {
+                return [null, $error];
+            }
+            $dealerHand = $updatedHand;
+            $turn->setDealerHand($dealerHand);
         }
-
+        
+        // Une fois que le croupier a fini de tirer, passer à la distribution des gains
         $turn->setStatus('distributeGains');
+        $turn->setLastUpdateDate(new \DateTime());
+        
+        // Sauvegarder les modifications
         $this->turnRepository->save($turn, true);
-
+        
         return [$turn, null];
+    } catch (\Exception $e) {
+        return [null, new \Error('Error during dealer draw: ' . $e->getMessage(), 500)];
     }
+}
 
     public function distributeGains(Turn $turn): array
     {
