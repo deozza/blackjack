@@ -22,5 +22,8 @@ jobs:
           SYMFONY_HOME: $HOME/.symfony
         shell: bash
 
+      - name: Add Symfony CLI to PATH
+        run: export PATH="$HOME/.symfony5/bin:$PATH"
+
       - name: Install dependencies
         run: composer install
