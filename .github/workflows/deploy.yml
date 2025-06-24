@@ -10,5 +10,24 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: test
-        run: echo "This is a test step in the deploy workflow."
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2' 
+          tools: composer 
+
+      - name: Install Symfony CLI
+        run: curl -sS https://get.symfony.com/cli/installer | bash
+        env:
+          SYMFONY_HOME: $HOME/.symfony
+        shell: bash
+
+      - name: Add Symfony CLI to PATH
+        run: export PATH="$HOME/.symfony5/bin:$PATH"
+
+      - name: Install dependencies
+        working-directory: ./symfony-blackjack
+        run: composer install
