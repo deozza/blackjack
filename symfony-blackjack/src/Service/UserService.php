@@ -89,7 +89,7 @@ class UserService
         $user = new User();
         $user->setEmail($data['email']);
         $user->setUsername($data['username']);
-        $hashedPassword = $this->passwordHasherFactory->getPasswordHasher(User::class)->hash('$data["password"]');
+        $hashedPassword = $this->passwordHasherFactory->getPasswordHasher(User::class)->hash($data["password"]);
 
         $user->setPassword($hashedPassword);
         $user->setCreationDate(new \DateTime());

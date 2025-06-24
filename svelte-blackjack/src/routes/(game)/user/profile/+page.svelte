@@ -1,26 +1,35 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
+  import { onMount } from "svelte";
 
-    const user = null;
+  let user:any = null;
+  let loading = true;
 
-    async function getUser() {
-        return fetch('http://127.0.0.1:8888/user/profile', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + localStorage.getItem('token') || ''
-            }}).then(response => {
-                if(response.status === 401) {
-                    throw new Error('Unauthorized');
-                }
-            })
-            .catch(error => {
-                if(error.message === 'Unauthorized') {
-                    localStorage.removeItem('token');
-                    goto('/');
-                }
-            });
+  async function getUser() {
+    try {
+      const response = await fetch('http://127.0.0.1:8888/user/profile', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + (localStorage.getItem('token') ?? '')
+        }
+      });
+
+      if (response.status === 401) {
+        throw new Error('Unauthorized');
+      }
+
+      const data = await response.json();
+      user = data;
+    } catch (error) {
+      if (error.message === 'Unauthorized') {
+        localStorage.removeItem('token');
+        goto('/');
+      }
+    } finally {
+      loading = false;
     }
+  }
 </script>
 
 
