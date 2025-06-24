@@ -57,7 +57,7 @@ docker-compose exec -u 1000 symfony-blackjack composer reset-db
 #### Lancer le serveur de développement symfony
 
 ```bash
-docker-compose exec -u 1000 symfony-blackjack symfony serve
+docker-compose exec -u 1000 symfony-blackjack symfony serve --allow-all-ip
 ```
 
 L'application sera disponible à l'url `http://127.0.0.1:8888` (ou un autre port si vous avez changé la configuration du service dans le `docker-compose.yml`).

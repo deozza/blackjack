@@ -1,4 +1,4 @@
-FROM php:8.2-fpm
+FROM --platform=linux/amd64 php:8.2-fpm
 
 RUN apt update
 RUN apt install -y zlib1g-dev g++ git libicu-dev zip libzip-dev zip
