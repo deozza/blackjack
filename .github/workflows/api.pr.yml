@@ -29,3 +29,7 @@ jobs:
       - name: Install dependencies
         working-directory: ./symfony-blackjack
         run: composer install
+
+      - name: Run tests Static
+        working-directory: ./symfony-blackjack
+        run: php vendor/bin/phpstan analyse src
