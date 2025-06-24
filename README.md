@@ -3,6 +3,7 @@
 ## Table des matières
 
 <!--toc:start-->
+ - [Documentation d'équipe](/doc/README.md)
  - [A propos](#a-propos)
  - [Comment installer](#comment-installer)
      - [Installer la partie symfony](#installer-la-partie-symfony)
