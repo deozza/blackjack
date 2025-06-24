@@ -33,3 +33,7 @@ jobs:
       - name: Run tests Static
         working-directory: ./symfony-blackjack
         run: php vendor/bin/phpstan analyse src
+
+      - name: Run tests Unit
+        working-directory: ./symfony-blackjack
+        run: php bin/phpunit
